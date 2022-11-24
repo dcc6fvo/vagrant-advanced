@@ -1,0 +1,45 @@
+# roles/mysql/tasks/main.yml
+  - name: 'Upgrade all packages to the latest version'
+    apt:
+      name: "*"
+      state: latest
+    become: true
+
+  - name: 'Install dependecy packages'
+    apt:
+      name: "{{item}}"
+      state: latest
+    become: true
+    loop: 
+      - mysql-server
+      - python-mysqldb
+
+  - name: 'Create MySQL database'
+    mysql_db: 
+      login_unix_socket: /var/run/mysqld/mysqld.sock
+      name: '{{wordpress_db}}'
+      state: present
+    become: true
+
+  - name: 'Create MySQL User'
+    mysql_user: 
+      login_unix_socket: /var/run/mysqld/mysqld.sock
+      host: '%'
+      name: '{{wordpress_user}}'
+      password: '{{wordpress_userpass}}'
+      priv: '{{wordpress_db}}.*:ALL'
+      state: present
+    become: true
+    no_log: true
+    
+  - name: 'Allowing MySQL remote connections'     
+    replace:
+      path: '/etc/mysql/mysql.conf.d/mysqld.cnf'
+      regexp: "{{ item.regex }}"
+      replace: "{{ item.value }}"
+    with_items:
+      - { regex: '127.0.0.1', value: '0.0.0.0'}
+    become: true
+    notify:
+      - restart mysql
+
