@@ -1,0 +1,76 @@
+---
+  - name: 'Install dependecy packages'
+    apt:
+      name: "{{item}}"
+      state: latest
+    become: true
+    loop: 
+      - unzip
+      - mysql-client
+
+  - name: 'Install python pip'
+    apt:
+      name: python3-pip
+      state: present
+    become: true
+
+  - name: 'Install PyMySQL from pip'
+    pip:
+      name: pymysql
+      state: present
+    become: true
+
+  - name: Creates the directory app
+    file:
+      path: '{{ www_dir }}'
+      state: directory
+      owner: www-data
+      group: www-data
+    become: true 
+
+  - name: 'Web app unzipping'
+    unarchive:
+      src: 'https://github.com/chapagain/crud-php-simple/archive/refs/heads/master.zip'
+      dest: '{{ www_dir }}'
+      extra_opts: [-j]
+      remote_src: yes
+      creates: '/tmp/webapp'
+    become: true
+
+  - name: 'Fix web app permissions'
+    file:
+      path: '{{ www_dir }}'
+      owner: www-data
+      recurse: true 
+      group: www-data
+      mode: "0755"
+    become: true
+
+  - name: 'Import users.sql to users database'
+    mysql_db:
+      login_user : '{{ wordpress_user }}'
+      login_password : '{{ wordpress_userpass }}'
+      login_host : '{{ wordpress_dbip }}'
+      state: import
+      name: '{{ wordpress_db }}'
+      target: '{{ role_path }}/files/users.sql'
+
+  - name: 'Modifying app configuratin file (wp-config.php) '     
+    replace:
+      path: '{{www_dir}}/config.php'
+      regexp: "{{ item.regex }}"
+      replace: "{{ item.value }}"
+    with_items:
+      - { regex: "databaseHost = 'localhost';", value: 'databaseHost = {{ wordpress_dbip }}' }
+      - { regex: "databaseName = 'test';", value: 'databaseName = {{ wordpress_db }}' }
+      - { regex: "databaseUsername = 'root';", value: 'databaseUsername = {{ wordpress_user }}' }
+      - { regex: "databasePassword = 'root';", value: 'databasePassword = {{ wordpress_userpass }}' }
+    become: true
+
+  - name: 'Configuring webapp on nginx'
+    template:
+      src: 'templates/default.j2'
+      dest: '/etc/nginx/sites-available/default'
+    become: true   
+    notify:
+      - restart nginx

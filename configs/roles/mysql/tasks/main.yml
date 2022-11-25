@@ -12,7 +12,18 @@
     become: true
     loop: 
       - mysql-server
-      - python-mysqldb
+
+  - name: 'Install python pip'
+    apt:
+      name: python3-pip
+      state: present
+    become: true
+
+  - name: 'Install PyMySQL from pip'
+    pip:
+      name: pymysql
+      state: present
+    become: true
 
   - name: 'Create MySQL database'
     mysql_db: 
@@ -42,4 +53,3 @@
     become: true
     notify:
       - restart mysql
-

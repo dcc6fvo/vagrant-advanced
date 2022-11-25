@@ -19,6 +19,16 @@ Vagrant.configure("2") do |config|
       w.vm.provision 'shell', inline: "cat /configs/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys"
     end
 
+    config.vm.define "nginx" do |n|
+      n.vm.hostname = "nginx"
+      n.vm.network "public_network", ip: "192.168.1.74", bridge: $default_network_interface
+      n.vm.synced_folder ".", "/vagrant", disabled: true
+      n.vm.synced_folder "./configs", "/configs"
+      n.vm.provision "shell",
+          inline: "apt-get update"
+      n.vm.provision 'shell', inline: "cat /configs/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys"
+    end
+
     config.vm.define "mysql" do |m|
       m.vm.hostname = "mysql"
 	    m.vm.network "public_network", ip: "192.168.1.73", bridge: $default_network_interface

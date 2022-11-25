@@ -9,3 +9,9 @@ ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 
 [database:vars]
 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+
+[nginx]
+192.168.1.74 ansible_user=vagrant ansible_ssh_private_key_file="/configs/id_rsa"
+
+[nginx:vars]
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'

@@ -3,6 +3,6 @@
   roles:
     - mysql
 
-- hosts: wordpress 
+- hosts: nginx
   roles:
-    - wordpress
+    - app
