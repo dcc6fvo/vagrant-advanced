@@ -77,7 +77,7 @@ Vagrant.configure("2") do |config|
       end
 
       ansible.vm.hostname = "ansible"
-      #Config de rede bridge
+      #Network bridge configuration
       ansible.vm.network "public_network", bridge: "#$default_network_interface"
    
       ansible.vm.provision "shell",
@@ -87,19 +87,19 @@ Vagrant.configure("2") do |config|
 		               apt-get update && \
                    apt-get install -y ansible"
   
-      #Config de pasta compartilhada
+      #Shared folder (host) configuration
       ansible.vm.synced_folder "./configs", "/configs"
 
-      #Script para copiar chave publica para dentro da vm 
+      #Public ssh key configuration
       ansible.vm.provision 'shell', inline: "cat /configs/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys"
 
-      #Script para copiar chave publica privada e ajustes p dentro da vm 
+      #Private ssh key configuration
       ansible.vm.provision 'shell', inline: "cp /configs/id_rsa /home/vagrant/.ssh/id_rsa && \
       chmod 600 /home/vagrant/.ssh/id_rsa && chown vagrant:vagrant /home/vagrant/.ssh/id_rsa"
 
-      #Script de integracao vagrant <-> ansible
-      #ansible.vm.provision "shell", inline: "ansible-playbook -i /vagrant/configs/ansible/hosts \
-      #  /vagrant/configs/ansible/main.yml"
+      #Integrating ansible <-> vagrant
+      ansible.vm.provision "shell", inline: "ansible-playbook -i /configs/hosts \
+        /configs/provisioning.yml"
 
       end
 end

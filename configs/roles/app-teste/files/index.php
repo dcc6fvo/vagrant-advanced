@@ -1,6 +1,7 @@
 <?php
-echo gethostname(); 
-echo '<br><br>';
+echo 'Server: '.gethostname(); 
+echo ' ';
+
 
 header( 'Content-Type: text/plain' );
 echo 'Host: ' . $_SERVER['HTTP_HOST'] . "\n";
