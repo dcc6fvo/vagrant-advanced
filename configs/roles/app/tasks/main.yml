@@ -34,7 +34,7 @@
       dest: '{{ www_dir }}'
       extra_opts: [-j]
       remote_src: yes
-      creates: '/tmp/webapp'
+      creates: '{{ www_dir }}/index.php'
     become: true
 
   - name: 'Fix web app permissions'

@@ -1,7 +1,14 @@
-[wordpress]
+[nginx-lb]
+192.168.1.70 ansible_user=vagrant ansible_ssh_private_key_file="/configs/id_rsa"
+
+[nginx-lb:vars]
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+
+[nginx]
+192.168.1.71 ansible_user=vagrant ansible_ssh_private_key_file="/configs/id_rsa"
 192.168.1.72 ansible_user=vagrant ansible_ssh_private_key_file="/configs/id_rsa"
 
-[wordpress:vars]
+[nginx:vars]
 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 
 [database]
@@ -10,8 +17,3 @@ ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 [database:vars]
 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 
-[nginx]
-192.168.1.74 ansible_user=vagrant ansible_ssh_private_key_file="/configs/id_rsa"
-
-[nginx:vars]
-ansible_ssh_common_args='-o StrictHostKeyChecking=no'

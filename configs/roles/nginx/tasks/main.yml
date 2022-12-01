@@ -1,0 +1,36 @@
+---    
+  - name: 'Upgrade all packages to the latest version'
+    apt:
+      name: "*"
+      state: latest
+    become: true
+
+  - name: 'Installing php and nginx dependencies'
+    apt:
+      name: "{{item}}"
+      state: latest
+    become: true
+    loop: 
+      - nginx
+      - php7.2-fpm
+      - php-ssh2
+      - python-mysqldb
+      - php7.2-mysql
+    
+  - name: 'Install python pip'
+    apt:
+      name: python3-pip
+      state: present
+    become: true
+
+  - name: 'Install PyMySQL from pip'
+    pip:
+      name: pymysql
+      state: present
+    become: true
+
+  - name: 'Install python open ssl from pip'
+    pip:
+      name: pyOpenSSL
+      state: present
+    become: true

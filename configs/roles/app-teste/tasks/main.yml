@@ -1,0 +1,34 @@
+---
+  - name: Creates the directory app
+    file:
+      path: '{{ www_dir }}'
+      state: directory
+      owner: www-data
+      group: www-data
+    become: true 
+
+  - name: 'Fix web app permissions'
+    file:
+      path: '{{ www_dir }}'
+      owner: www-data
+      recurse: true 
+      group: www-data
+      mode: "0755"
+    become: true
+
+  - name: Copy file with owner and permissions
+    copy:
+      src: 'files/index.php'
+      dest: '{{www_dir}}index.php'
+      owner: www-data
+      group: www-data
+      mode: '0644'
+    become: yes
+
+  - name: 'Configuring webapp on nginx'
+    template:
+      src: 'templates/default.j2'
+      dest: '/etc/nginx/sites-available/default'
+    become: true   
+    notify:
+      - restart nginx

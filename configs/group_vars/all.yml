@@ -1,8 +1,8 @@
 ---
-wordpress_user: 'wordpress_user'
-wordpress_db: 'wordpress_db'
-wordpress_userpass: '12345'
-wordpress_dbip: '192.168.1.73'
-wordpress_dir: '/var/www/wordpress'
+www_user: 'www_user'
+www_db: 'www_db'
+www_userpass: '12345'
+www_dbip: '192.168.1.73'
 
 www_dir: '/var/www/public/'
+ssl_dir: '/etc/nginx/ssl/'

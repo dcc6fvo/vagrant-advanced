@@ -3,6 +3,15 @@
   roles:
     - mysql
 
+- hosts: nginx-lb
+  roles:
+    - load-balance
+
 - hosts: nginx
   roles:
-    - app
+    - app-teste
+
+#- hosts: nginx
+#  roles:
+#    - app
+

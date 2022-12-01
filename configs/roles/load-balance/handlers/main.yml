@@ -1,6 +1,6 @@
 ---
-- name: restart apache
+- name: restart nginx
   service:
-    name: apache2
+    name: nginx
     state: restarted
   become: true

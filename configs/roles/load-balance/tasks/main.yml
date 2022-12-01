@@ -1,0 +1,35 @@
+---
+  - name: 'Creates the ssl dir'
+    file:
+      path: '{{ssl_dir}}'
+      state: directory
+    become: true 
+
+  - name: 'Generate SSL key'
+    openssl_privatekey:
+      path: '{{ssl_dir}}key.pem'
+      size: 2048
+      type: RSA
+    become: true 
+
+  - name: 'Generate an OpenSSL Certificate Signing Request'
+    openssl_csr:
+      path: '{{ssl_dir}}key.csr'
+      privatekey_path: '{{ssl_dir}}key.pem'
+    become: true 
+
+  - name: 'Generate a Self Signed OpenSSL certificate'
+    openssl_certificate:
+      path: '{{ssl_dir}}key.crt'
+      privatekey_path: '{{ssl_dir}}key.pem'
+      csr_path: '{{ssl_dir}}key.csr'
+      provider: selfsigned
+    become: true 
+
+  - name: 'Configuring webapp on nginx'
+    template:
+      src: 'templates/default.j2'
+      dest: '/etc/nginx/sites-available/default'
+    become: true   
+    notify:
+      - restart nginx
