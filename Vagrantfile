@@ -1,6 +1,12 @@
 # Grab the name of the default interface
 $default_network_interface = `ip route | awk '/^default/ {printf "%s", $5; exit 0}'`
 
+# IP Address configuration
+$nginxlb_ip = '192.168.1.70'
+$nginx1_ip = '192.168.1.71'
+$nginx2_ip = '192.168.1.72'
+$mysql_ip = '192.168.1.73'
+
 Vagrant.configure("2") do |config|
 
 	  config.vm.define "nginx-lb" do |n|
@@ -12,7 +18,7 @@ Vagrant.configure("2") do |config|
       end
 
       n.vm.hostname = "nginx-lb"
-      n.vm.network "public_network", ip: "192.168.1.70", bridge: $default_network_interface
+      n.vm.network "public_network", ip: $nginxlb_ip, bridge: $default_network_interface
       n.vm.synced_folder ".", "/vagrant", disabled: true
       n.vm.synced_folder "./configs", "/configs"
       n.vm.provision "shell",
@@ -28,7 +34,7 @@ Vagrant.configure("2") do |config|
         vb.name = "nginx-1"
       end
       n1.vm.hostname = "nginx1"
-      n1.vm.network "public_network", ip: "192.168.1.71", bridge: $default_network_interface
+      n1.vm.network "public_network", ip: $nginx1_ip, bridge: $default_network_interface
       n1.vm.synced_folder ".", "/vagrant", disabled: true
       n1.vm.synced_folder "./configs", "/configs"
       n1.vm.provision "shell",
@@ -44,7 +50,7 @@ Vagrant.configure("2") do |config|
         vb.name = "nginx-2"
       end
       n2.vm.hostname = "nginx2"
-      n2.vm.network "public_network", ip: "192.168.1.72", bridge: $default_network_interface
+      n2.vm.network "public_network", ip: $nginx2_ip, bridge: $default_network_interface
       n2.vm.synced_folder ".", "/vagrant", disabled: true
       n2.vm.synced_folder "./configs", "/configs"
       n2.vm.provision "shell",
@@ -60,7 +66,7 @@ Vagrant.configure("2") do |config|
         vb.name = "nginx-mysql"
       end
       m.vm.hostname = "mysql"
-	    m.vm.network "public_network", ip: "192.168.1.73", bridge: $default_network_interface
+	    m.vm.network "public_network", ip: $mysql_ip, bridge: $default_network_interface
       m.vm.synced_folder ".", "/vagrant", disabled: true
       m.vm.synced_folder "./configs", "/configs"
       m.vm.provision "shell",
